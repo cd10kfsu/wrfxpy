@@ -1,0 +1,58 @@
+#!/bin/bash
+#SBATCH --time=%(wall_time_hrs)02d:00:00 # walltime, abbreviated by -t
+#SBATCH --ntasks=%(np)d   # number of MPI tasks, abbreviated by -n
+
+##SBATCH --nodes=%(nodes)d     # number of cluster nodes, abbreviated by -N  #KH: comment out
+##SBATCH -o  # name of the stdout
+# additional information for allocated clusters
+##SBATCH --account=kochanski-kp     # account - abbreviated by -A  #KH: comment out
+#SBATCH --partition=math-alderaan  # partition, abbreviated by -p  #KH: comment out
+##SBATCH --job-name=WRFX  #KH: comment out
+
+# set data and working directories
+export WORKDIR=%(cwd)s 
+cd $WORKDIR
+
+#
+
+###
+#alderaan-nuwrf:
+
+export WRFIO_NCD_LARGE_FILE_SUPPORT=1
+
+module purge
+module load gcc/9.2.1
+module load openmpi/4.1.0/gcc/9.2.1
+module load cmake/3.20.1
+ml
+
+# NUWRF env
+LIBDIR_TAG=/data002/projects/dac/model/nuwrf_libs/lib/gcc9-openmpi
+export LD_LIBRARY_PATH=$LIBDIR_TAG/zlib/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/hdf5/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/netcdf4/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/esmf/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/openjpeg/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/jpeg/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/jasper/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/gdal/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/fortrangis/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/eccodes/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64
+LISDIR=/discover/nobackup/projects/lis
+
+###
+
+
+# for MPICH2 over Ethernet, set communication method to TCP
+# see below for network interface selection options for different MPI distributions
+#export MV2_ENABLE_AFFINITY=0  #KH:comment out for now
+
+env
+
+#setenv MPICH_NEMESIS_NETMOD tcp
+# run the program
+# see below for ways to do this for different MPI distributions
+##mpirun -np $SLURM_NTASKS ./wrf.exe  #KH: removed p option
+
+mpirun -n $SLURM_NTASKS ./wrf.exe
