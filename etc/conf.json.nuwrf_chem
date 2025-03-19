@@ -1,0 +1,20 @@
+{
+  "qsys": "key from clusters.json",
+  "sleep_seconds": 30,
+  "download_sleep_seconds": 8,
+  "max_retries": 7,
+  "ingest_path": "ingest",
+  "cache_path": "cache",
+  "workspace_path": "/fs/ember-fs2/collab/cda/work/workspace/wrfxpy_nuwrf_chem",
+  "wps_install_path": "/fs/ember-fs2/collab/cda/model/nuwrf_dev_chem/WPS",
+  "wrf_install_path": "/fs/ember-fs2/collab/cda/model/nuwrf_dev_chem/WRF",
+  "sys_install_path": "/fs/ember-fs2/collab/cda/work/workspace/wrfxpy",
+  "wps_geog_path" : "/fs/ember-fs2/collab/nuwrf_data/cases/geog",
+  "wget" : "/fs/ember-fs2/collab/cda/pkg/miniforge3/envs/wrfxpy/bin/wget",
+  "wget_options": ["--no-hsts","--read-timeout=1","--limit-rate=10m","--random-wait"],
+  "shuttle_ssh_key": "path/to/your/priv_ssh_key/to/remote/host",
+  "shuttle_remote_user" : "your_username",
+  "shuttle_remote_host" : "remote_hostname",
+  "shuttle_remote_root" : "remote director for output storage",
+  "shuttle_lock_path": "/path/to/unique/file/not/NFS/mounted"
+} 

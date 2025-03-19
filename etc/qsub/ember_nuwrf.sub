@@ -1,0 +1,48 @@
+#!/bin/bash
+#SBATCH --time=%(wall_time_hrs)02d:00:00 # walltime, abbreviated by -t
+#SBATCH --ntasks=%(np)d   # number of MPI tasks, abbreviated by -n
+#SBATCH --nodes=%(nodes)d     # number of cluster nodes, abbreviated by -N
+#SBATCH --job-name=WRFX  # job name
+
+# set data and working directories
+export WORKDIR=%(cwd)s 
+cd $WORKDIR
+
+echo "load env: step-1: module load"
+module purge
+module load slurm
+module load gcc/10.2.0
+ml
+
+#echo "load env: step-2: spack load"
+spack unload
+#    spack load openmpi@4.1.4%%gcc@10.2.0 #cannot use multiple nodes
+#spack load cmake@3.25.1%%gcc@10.2.0
+#spack load python@3.9.15%%gcc@10.2.0
+#spack load  libx11@1.7.0%%gcc@10.2.0
+#spack find --loaded
+
+
+echo "NUWRF env load"
+export LIBDIR_TAG="/fs/ember-fs2/collab/cda/model/nuwrf_libs/lib/gnu-openmpi"
+export LD_LIBRARY_PATH=$LIBDIR_TAG/zlib/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/png/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/hdf5/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/netcdf4/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/esmf/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/openjpeg/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/jpeg/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/jasper/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/png/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/gdal/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/fortrangis/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LIBDIR_TAG/eccodes/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64
+export PATH=$LIBDIR_TAG/netcdf4/bin:$PATH
+
+# openmpi
+export PATH="/fs/ember-fs2/collab/cda/model/libs/openmpi_4.1.2_gnu_10.2.0/bin:$PATH"
+export LD_LIBRARY_PATH="/fs/ember-fs2/collab/cda/model/libs/openmpi_4.1.2_gnu_10.2.0/lib:$LD_LIBRARY_PATH"
+
+
+mpirun -n $SLURM_NTASKS ./wrf.exe

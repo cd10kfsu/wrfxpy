@@ -481,7 +481,8 @@ def render_ignitions(js, max_dom):
         # ensure fire model is switched on in every domain with ignitions
         nml_fire['ifire'][dom_id-1] = 1
         nml_fire['fire_wind_log_interp'][dom_id-1] = 1
-        nml_fire['fire_use_windrf'][dom_id-1] = 2
+        #CDA#nml_fire['fire_use_windrf'][dom_id-1] = 2
+        nml_fire['fire_use_windrf'][dom_id-1] = 0
         if not (js.use_tign_ignition or js.use_realtime):
             nml_fire['fire_num_ignitions'][dom_id-1] = len(dom_igns)
         nml_fire['fire_fuel_read'][dom_id-1] = -1 # real fuel data from WPS
